@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EafTrip - Pencarian Wisata</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom right, #e6f9f6, #d9f2f0);
+            color: #130e0c;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #084c61 0%, #008080 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(90deg, #084c61 0%, #008080 100%);
+        }
+
+        .text-midnight-green {
+            color: #084c61;
+        }
+
+        .bg-teal {
+            background-color: #008080;
+        }
+
+        .bg-c3f0f5 {
+            background-color: #d0ece5;
+        }
+
+        .hover\:bg-pale-green-hover:hover {
+            background-color: #d0ece5;
+        }
+
+        /* Scrollable modal */
+        .modal-body {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-azure">
+    <nav
+        class="fixed top-0 left-0 right-0 flex items-center justify-between px-6 py-4 bg-midnight-green shadow-md z-20 text-azure">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-azure rounded-full flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-teal" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </div>
+            <span class="font-bold text-xl">EafTrip</span>
+        </div>
+        <div class="md:flex space-x-6 font-medium">
+            <a href="#" class="hover:underline hover:text-c3f0f5">Beranda</a>
+            <a href="#" class="hover:underline hover:text-c3f0f5">Provinsi</a>
+            <a href="#" class="hover:underline hover:text-c3f0f5">Kota</a>
+            <a href="Favorit.html" class="hover:underline hover:text-c3f0f5">Favorit</a>
+            <div class="flex items-center">
+                <button id="logoutButton" class="flex items-center text-azure hover:text-persian-orange transition">
+                    <i class="fas fa-sign-out-alt mr-1"></i> Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+    <section class="pt-28 pb-10 bg-gradient-to-b from-white to-azure">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-liver mb-4">
+                    <span class="gradient-text">Cari Destinasi Wisata</span>
+                </h2>
+                <p class="text-lg text-liver max-w-3xl mx-auto">
+                    Temukan tempat wisata favorit Anda di Sulawesi Selatan berdasarkan lokasi dan kategori
+                </p>
+            </div>
+            <div class="bg-white p-8 rounded-xl shadow-lg max-w-4xl mx-auto">
+                <form id="searchForm" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="searchLocation" class="block text-liver font-medium mb-2">
+                                <i class="fas fa-map-marker-alt mr-2 text-teal"></i>
+                                Pilih Kota/Kabupaten
+                            </label>
+                            <select id="searchLocation"
+                                class="w-full p-4 border border-gray-300 rounded-lg focus:ring-teal focus:border-teal text-liver">
+                                <option value="" selected disabled>-- Pilih Lokasi --</option>
+                                <option value="Makassar">Makassar</option>
+                                <option value="Maros">Maros</option>
+                                <option value="Gowa">Gowa</option>
+                                <option value="Bantaeng">Bantaeng</option>
+                                <option value="Bulukumba">Bulukumba</option>
+                                <option value="Jeneponto">Jeneponto</option>
+                                <option value="Takalar">Takalar</option>
+                                <option value="Sinjai">Sinjai</option>
+                                <option value="Bone">Bone</option>
+                                <option value="Pangkajene">Pangkajene</option>
+                                <option value="Barru">Barru</option>
+                                <option value="Soppeng">Soppeng</option>
+                                <option value="Wajo">Wajo</option>
+                                <option value="Pinrang">Pinrang</option>
+                                <option value="Enrekang">Enrekang</option>
+                                <option value="Luwu">Luwu</option>
+                                <option value="Tana Toraja">Tana Toraja</option>
+                                <option value="Luwu Utara">Luwu Utara</option>
+                                <option value="Luwu Timur">Luwu Timur</option>
+                                <option value="Toraja Utara">Toraja Utara</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="searchCategory" class="block text-liver font-medium mb-2">
+                                <i class="fas fa-tags mr-2 text-teal"></i>
+                                Pilih Kategori Wisata
+                            </label>
+                            <select id="searchCategory"
+                                class="w-full p-4 border border-gray-300 rounded-lg focus:ring-teal focus:border-teal text-liver">
+                                <option value="" selected disabled>-- Pilih Kategori --</option>
+                                <option value="all">Semua Kategori</option>
+                                <option value="pantai">Pantai/Danau</option>
+                                <option value="alam">Pegunungan</option>
+                                <option value="budaya">Budaya/Edukasi/Sejarah</option>
+                                <option value="kota">Kota</option>
+                                <option value="kuliner">Kuliner</option>
+                                <option value="air terjun">Air Terjun</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <button type="submit"
+                            class="w-full md:w-auto px-8 py-4 gradient-bg text-azure font-semibold rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center mx-auto">
+                            <i class="fas fa-search mr-3"></i>
+                            Cari Destinasi
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <section id="searchResults" class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-2xl font-bold text-liver">
+                Semua Destinasi Wisata
+            </h3>
+            <span id="resultCount" class="bg-teal text-azure px-3 py-1 rounded-full text-sm font-medium">
+                <!-- Result count will be populated by JavaScript -->
+            </span>
+        </div>
+        <div id="searchResultsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Results will be populated by JavaScript -->
+        </div>
+        <div id="noResults" class="text-center py-12 hidden">
+            <img src="https://cdn-icons-png.flaticon.com/512/4076/4076478.png" alt="No results"
+                class="w-32 h-32 mx-auto mb-6 opacity-70">
+            <h4 class="text-xl font-bold text-liver mb-2">Tidak ada destinasi yang ditemukan</h4>
+            <p class="text-liver/80 max-w-md mx-auto">Maaf, kami tidak menemukan destinasi yang sesuai dengan kriteria
+                pencarian Anda. Coba ubah filter pencarian Anda.</p>
+        </div>
+    </section>
+    <div id="destinationModal" class="fixed inset-0 bg-black/50 z-50 hidden overflow-y-auto p-4">
+        <div class="bg-white rounded-xl max-w-2xl w-full mx-auto my-8 max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="p-6 border-b sticky top-0 bg-white z-10">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 id="modalTitle" class="text-2xl md:text-3xl font-bold text-liver"></h2>
+                        <div class="flex items-center mt-1 md:mt-2">
+                            <i class="fas fa-map-marker-alt mr-2 text-teal"></i>
+                            <span id="modalLocation" class="text-liver"></span>
+                        </div>
+                    </div>
+                    <button class="close-modal text-3xl text-midnight-green hover:text-teal">&times;</button>
+                </div>
+            </div>
+            <div class="overflow-y-auto flex-1 p-6">
+                <img id="modalImage" src="" alt="Destination Image"
+                    class="w-full h-48 md:h-64 object-cover rounded-lg mb-6">
+
+                <div class="flex items-center mb-4">
+                    <div id="modalRating" class="flex text-persian-orange"></div>
+                    <span class="text-liver text-lg ml-2 font-medium" id="modalReviews"></span>
+                </div>
+
+                <p class="text-liver text-lg mb-6" id="modalDescription"></p>
+
+                <div class="rating-widget mb-6">
+                    <h3 class="text-xl font-bold text-midnight-green mb-3">Beri Rating:</h3>
+                    <div class="flex space-x-2" id="ratingStars">
+                        <i class="far fa-star text-2xl text-gray-400 cursor-pointer hover:text-persian-orange"
+                            data-value="1"></i>
+                        <i class="far fa-star text-2xl text-gray-400 cursor-pointer hover:text-persian-orange"
+                            data-value="2"></i>
+                        <i class="far fa-star text-2xl text-gray-400 cursor-pointer hover:text-persian-orange"
+                            data-value="3"></i>
+                        <i class="far fa-star text-2xl text-gray-400 cursor-pointer hover:text-persian-orange"
+                            data-value="4"></i>
+                        <i class="far fa-star text-2xl text-gray-400 cursor-pointer hover:text-persian-orange"
+                            data-value="5"></i>
+                    </div>
+                    <p id="ratingMessage" class="text-teal mt-2 text-sm"></p>
+                    <button id="submitRating" class="mt-2 px-4 py-2 bg-teal text-white rounded-md text-sm hidden">Kirim
+                        Rating</button>
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button id="historyButton"
+                        class="px-6 py-2 bg-teal text-azure rounded-lg font-medium hover:bg-midnight-green transition">
+                        <i class="fas fa-landmark mr-2"></i> Sejarah & Budaya
+                    </button>
+                    <button id="mapsButton"
+                        class="px-6 py-2 bg-white border border-teal text-teal rounded-lg font-medium hover:bg-teal hover:text-azure transition">
+                        <i class="fas fa-map-marked-alt mr-2"></i> Lihat Peta
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="historyPage" class="fixed inset-0 bg-white z-50 hidden overflow-y-auto">
+        <div class="max-w-4xl mx-auto p-4 sm:p-6">
+            <div class="history-header mb-6 sm:mb-8">
+                <button class="back-btn px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition mb-4"
+                    id="backBtn">
+                    <i class="fas fa-arrow-left mr-2"></i> Kembali
+                </button>
+                <h2 id="historyTitle" class="text-2xl sm:text-3xl font-bold text-center mt-4 sm:mt-8 text-liver"></h2>
+                <div class="text-center mt-2">
+                    <i class="fas fa-map-marker-alt mr-2 text-teal"></i>
+                    <span id="historyLocation" class="text-liver"></span>
+                </div>
+            </div>
+
+            <div class="history-content">
+                <img id="historyImage" src="" alt="History Image"
+                    class="w-full h-64 sm:h-96 object-cover rounded-lg mb-6 sm:mb-8">
+
+                <div id="historyContent" class="prose max-w-none text-liver">
+                    <!-- Content will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="dataDest.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

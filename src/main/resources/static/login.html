@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Wisata</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .slideshow-container {
+      width: 300%;
+      display: flex;
+      transition: transform 1s ease-in-out;
+    }
+
+    .slide {
+      flex: 0 0 33.3333%;
+      background-size: cover;
+      background-position: center;
+      height: 100vh;
+    }
+
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+  </style>
+</head>
+
+<body class="overflow-hidden">
+
+  <div class="relative w-full h-screen overflow-hidden">
+    <div id="slider" class="absolute top-0 left-0 w-full h-full flex slideshow-container">
+      <div class="slide" style="background-image: url('./wisata/gambar\ 7.jpg')"></div>
+      <div class="slide" style="background-image: url('./wisata/gambar\ 2.jpg')"></div>
+      <div class="slide" style="background-image: url('./wisata/gambar\ 3.jpg')"></div>
+      <div class="slide" style="background-image: url('./wisata/gambar\ 5.jpg')"></div>
+      <div class="slide" style="background-image: url('./wisata/gambar\ 6.jpg')"></div>
+      <div class="slide" style="background-image: url('./wisata/gambar\ 9.jpg')"></div>
+      <div class="slide" style="background-image: url('./wisata/gambar\ 3.jpg')"></div>
+      <div class="slide" style="background-image: url('./wisata/gambar\ 2.jpg')"></div>
+      <div class="slide" style="background-image: url('./wisata/gambar\ 8.jpg')"></div>
+    </div>
+
+    <div class="absolute top-0 left-0 w-full h-full overlay z-10"></div>
+
+    <div
+      class="absolute top-1/2 left-1/2 z-20 transform -translate-x-1/2 -translate-y-1/2 bg-[#084C61] bg-opacity-50 text-[#EDF7F6] p-8 rounded-xl w-[50%] max-w-md shadow-xl">
+      <h1 class="text-3xl font-bold text-center mb-2">Login EafTrip</h1>
+      <p class="text-sm text-center mb-6">Silahkan login terlebih dahulu sebelum menjelajah di Sulsel!</p>
+
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label for="email" class="block text-sm mb-1">Email :</label>
+          <input type="email" id="email" class="w-full px-4 py-2 bg-[#177E89] rounded-md text-white focus:outline-none"
+            required />
+        </div>
+        <div>
+          <label for="password" class="block text-sm mb-1">Password :</label>
+          <input type="password" id="password"
+            class="w-full px-4 py-2 bg-[#177E89] rounded-md text-white focus:outline-none" required />
+        </div>
+        <div class="flex items-center">
+          <input type="checkbox" id="remember" class="mr-2">
+          <label for="remember">Ingatkan saya</label>
+        </div>
+        <button type="submit"
+          class="w-full py-2 bg-[#CE8950] text-white font-semibold rounded-md hover:bg-[#bf7641] transition">Masuk</button>
+      </form>
+
+      <div id="errorMessage" class="text-red-300 text-center mt-4 hidden"></div>
+
+      <p class="text-center text-sm mt-4">Belum punya akun?
+        <a href="buat akun.html" class="text-[#CE8950] hover:underline">Daftar sekarang</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="dataUser.js"></script>
+  <script>
+    const slider = document.getElementById("slider");
+    const totalSlides = 9;
+    const imagesPerSlide = 3;
+    let currentGroup = 0;
+
+    function moveSlide() {
+      currentGroup = (currentGroup + 1) % (totalSlides / imagesPerSlide);
+      slider.style.transform = `translateX(-${currentGroup * 100}%)`;
+    }
+
+    setInterval(moveSlide, 3000);
+
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errorMessage = document.getElementById('errorMessage');
+
+      // Reset error
+      errorMessage.classList.add('hidden');
+
+      // Validasi
+      if (!email || !password) {
+        errorMessage.textContent = 'Email dan password harus diisi!';
+        errorMessage.classList.remove('hidden');
+        return;
+      }
+
+      // Cari user di localStorage atau data awal
+      let storedUsers = JSON.parse(localStorage.getItem('users')) || users;
+      const user = storedUsers.find(u => u.email === email && u.password === password);
+
+      if (user) {
+        // Simpan status login di sessionStorage (akan hilang saat browser ditutup)
+        sessionStorage.setItem('isLoggedIn', 'true');
+        sessionStorage.setItem('currentUser', JSON.stringify(user));
+
+        // Redirect ke halaman utama
+        window.location.href = 'index.html';
+      } else {
+        errorMessage.textContent = 'Email atau password salah!';
+        errorMessage.classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
+
+</html>

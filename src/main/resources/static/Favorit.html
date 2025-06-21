@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EafTrip - Favorit</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="min-h-screen">
+    <nav
+        class="fixed top-0 left-0 right-0 flex items-center justify-between px-6 py-4 bg-midnight-green shadow-md z-20 text-azure">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-azure rounded-full flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-teal" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </div>
+            <span class="font-bold text-xl">EafTrip</span>
+        </div>
+        <div class="hidden md:flex space-x-6 font-medium">
+            <a href="welcome page.html" class="hover:underline text-white">Beranda</a>
+            <a href="pencarian.html" class="hover:underline text-white">Kota</a>
+            <a href="index.html" class="hover:underline text-white">Rekomendasi</a>
+            <a href="#" class="hover:underline text-white font-bold">Favorit</a>
+            <a href="profil.html" class="hover:underline text-white">Profil</a>
+        </div>
+    </nav>
+
+    <section class="pt-32 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-liver mb-4">
+                <span class="gradient-text">Destinasi Favorit Anda</span>
+            </h2>
+            <p class="text-lg text-liver max-w-3xl mx-auto">
+                Berikut daftar tempat wisata yang telah Anda tandai sebagai favorit
+            </p>
+        </div>
+
+        <div id="destinationsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Favorite destinations will be rendered here -->
+        </div>
+
+        <div class="text-center mt-16">
+            <a href="index.html"
+                class="px-8 py-3 gradient-bg text-azure font-semibold rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105 inline-flex items-center">
+                Temukan Destinasi Lain
+                <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Modal Structure -->
+    <div id="destinationModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle" class="text-3xl font-bold"></h2>
+                <div class="flex items-center mt-2">
+                    <i class="fas fa-map-marker-alt mr-2"></i>
+                    <span id="modalLocation"></span>
+                </div>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <img id="modalImage" src="" alt="Destination Image" class="modal-image">
+                <div class="flex items-center text-persian-orange mb-4">
+                    <div id="modalRating" class="rating-stars"></div>
+                    <span class="text-liver text-lg ml-2 font-medium" id="modalReviews"></span>
+                </div>
+                <p class="text-liver text-lg mb-6" id="modalDescription"></p>
+                <div class="rating-widget mb-6">
+                    <h3 class="text-xl font-bold text-midnight-green mb-3">Beri Rating:</h3>
+                    <div class="flex space-x-2" id="ratingStars">
+                        <i class="far fa-star text-2xl text-gray-400 cursor-pointer hover:text-persian-orange"
+                            data-value="1"></i>
+                        <i class="far fa-star text-2xl text-gray-400 cursor-pointer hover:text-persian-orange"
+                            data-value="2"></i>
+                        <i class="far fa-star text-2xl text-gray-400 cursor-pointer hover:text-persian-orange"
+                            data-value="3"></i>
+                        <i class="far fa-star text-2xl text-gray-400 cursor-pointer hover:text-persian-orange"
+                            data-value="4"></i>
+                        <i class="far fa-star text-2xl text-gray-400 cursor-pointer hover:text-persian-orange"
+                            data-value="5"></i>
+                    </div>
+                    <p id="ratingMessage" class="text-teal mt-2 text-sm"></p>
+                </div>
+                <div class="text-center">
+                    <button id="historyButton" class="history-btn">
+                        <i class="fas fa-landmark mr-2"></i> Sejarah & Budaya
+                    </button>
+                    <button id="mapsButton"
+                        class="px-6 py-2 bg-white border border-teal text-teal rounded-lg font-medium hover:bg-teal hover:text-azure transition">
+                        <i class="fas fa-map-marked-alt mr-2"></i> Lihat Peta
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Page Structure -->
+    <div id="historyPage" class="history-page hidden">
+        <div class="history-navbar">
+            <button class="back-btn" id="backBtn">
+                <i class="fas fa-arrow-left mr-2"></i> Kembali
+            </button>
+            <h2 id="historyTitle" class="text-xl font-bold"></h2>
+            <div class="w-40"></div>
+        </div>
+        <div class="history-content">
+            <img id="historyImage" src="" alt="History Image" class="history-image">
+            <div id="historyContent" class="history-text"></div>
+        </div>
+    </div>
+
+    <footer class="bg-midnight-green text-azure py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">EafTrip</h3>
+                    <p class="mb-4 text-azure/80">Portal rekomendasi wisata terbaik di Sulawesi Selatan untuk pengalaman
+                        tak terlupakan.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-azure hover:text-teal"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-azure hover:text-teal"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-azure hover:text-teal"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-azure hover:text-teal"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Tautan Cepat</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Beranda</a></li>
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Kota</a></li>
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Rekomendasi</a></li>
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Favorit</a></li>
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Profil</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Kategori Wisata</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Wisata Alam</a></li>
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Wisata Budaya</a></li>
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Wisata Pantai</a></li>
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Wisata Kuliner</a></li>
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Wisata Sejarah</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Kontak Kami</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-teal"></i>
+                            <span class="text-azure/80">Jl. Sangir No. 94, Makassar, Sulawesi Selatan</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone-alt mr-3 text-teal"></i>
+                            <span class="text-azure/80">+62 812 4414 2632</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-teal"></i>
+                            <span class="text-azure/80">info@wisatasulsel.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-azure/20 mt-12 pt-8 text-center text-azure/80">
+                <p>&copy; 2023 EafTrip. Hak Cipta Dilindungi.(not real)</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="dataUser.js"></script>
+    <script src="dataDest.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Favorite page specific functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get favorites from localStorage
+            const getFavorites = () => {
+                return JSON.parse(localStorage.getItem('favorites')) || [];
+            };
+
+            // Toggle favorite status
+            const toggleFavorite = (id) => {
+                const favorites = getFavorites();
+                const index = favorites.indexOf(id);
+
+                if (index === -1) {
+                    favorites.push(id);
+                } else {
+                    favorites.splice(index, 1);
+                }
+
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+                renderFavoriteDestinations();
+            };
+
+            // Render favorite destinations
+            const renderFavoriteDestinations = () => {
+                const favorites = getFavorites();
+                const favDestinations = destinations.filter(dest => favorites.includes(dest.id));
+                const grid = document.getElementById('destinationsGrid');
+
+                if (favDestinations.length === 0) {
+                    grid.innerHTML = `
+                        <div class="col-span-3 text-center py-12">
+                            <i class="fas fa-heart-broken text-5xl text-persian-orange mb-4"></i>
+                            <h3 class="text-xl font-semibold text-liver">Belum ada destinasi favorit</h3>
+                            <p class="text-liver/80 mt-2">Tambahkan destinasi favorit Anda dari halaman rekomendasi</p>
+                            <a href="index.html" class="mt-4 inline-block px-6 py-2 bg-teal text-white rounded-lg hover:bg-midnight-green transition">
+                                Temukan Destinasi
+                            </a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = '';
+
+                favDestinations.forEach(destination => {
+                    const isFavorite = favorites.includes(destination.id);
+                    const card = document.createElement('div');
+                    card.className = 'card group relative rounded-2xl overflow-hidden shadow-xl h-96 shine-effect';
+                    card.innerHTML = `
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent z-10"></div>
+                        <img src="${destination.image}" 
+                            alt="${destination.title}" 
+                            class="card-image absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute bottom-0 left-0 right-0 z-20 p-6">
+                            <div class="tag inline-block px-3 py-1 rounded-full text-sm text-azure mb-2">
+                                <i class="fas fa-map-marker-alt mr-1"></i> ${destination.location}
+                            </div>
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-2xl font-bold text-azure">${destination.title}</h3>
+                                <i class="fas fa-heart text-xl ${isFavorite ? 'text-red-500' : 'text-gray-300'} cursor-pointer ml-2 heart-icon" 
+                                   data-id="${destination.id}"></i>
+                            </div>
+                            <div class="flex items-center text-persian-orange my-3">
+                                ${renderStars(destination.rating)}
+                                <span class="text-azure text-sm ml-2">${destination.rating} (${destination.reviews} ulasan)</span>
+                            </div>
+                            <p class="text-azure/90 mb-4">${destination.description}</p>
+                            <button class="detail-btn px-4 py-2 bg-azure text-teal rounded-full font-semibold text-sm hover:bg-gray-100 transition flex items-center"
+                                    data-id="${destination.id}">
+                                <i class="fas fa-info-circle mr-2"></i> Detail Wisata
+                            </button>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+
+                // Attach event listeners
+                document.querySelectorAll('.detail-btn').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        const destination = destinations.find(dest => dest.id === id);
+                        showDestinationModal(destination);
+                    });
+                });
+
+                document.querySelectorAll('.heart-icon').forEach(icon => {
+                    icon.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        const id = parseInt(this.getAttribute('data-id'));
+                        toggleFavorite(id);
+                    });
+                });
+            };
+
+            // Initialize favorite page
+            renderFavoriteDestinations();
+        });
+    </script>
+</body>
+
+</html>

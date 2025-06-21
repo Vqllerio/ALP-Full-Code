@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EafTrip</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Add scrollable modal */
+        .modal-body {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        /* Fixed positioning for history page */
+        .history-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        /* New button styles */
+        .filter-btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.15);
+            background: linear-gradient(to right,
+                    rgba(255, 255, 255, 0.15) 0%,
+                    rgba(255, 255, 255, 0.15) 77%,
+                    rgba(255, 255, 255, 0.4) 92%,
+                    rgba(255, 255, 255, 0.0) 100%);
+            transform: rotate(30deg);
+            transition: all 0.7s ease-out;
+        }
+
+        .filter-btn:hover::after {
+            left: 100%;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(90deg, #177e89, #084c61);
+            color: #edf7f6;
+            border: none;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-azure">
+    <!-- Navigation -->
+    <nav
+        class="fixed top-0 left-0 right-0 flex items-center justify-between px-6 py-4 bg-midnight-green shadow-md z-20 text-azure">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-azure rounded-full flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-teal" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </div>
+            <span class="font-bold text-xl">EafTrip</span>
+        </div>
+        <div class="md:flex space-x-6 font-medium">
+            <a href="#" class="hover:underline hover:text-c3f0f5">Beranda</a>
+            <a href="#" class="hover:underline hover:text-c3f0f5">Provinsi</a>
+            <a href="#" class="hover:underline hover:text-c3f0f5">Kota</a>
+            <a href="Favorit.html" class="hover:underline hover:text-c3f0f5">Favorit</a>
+            <div class="flex items-center">
+                <button id="logoutButton" class="flex items-center text-azure hover:text-persian-orange transition">
+                    <i class="fas fa-sign-out-alt mr-1"></i> Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 bg-black/50 z-10"></div>
+        <img src="https://images.unsplash.com/photo-1589394815804-9648adb3d470?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+            alt="Hero Background" class="absolute inset-0 w-full h-full object-cover">
+
+        <div class="relative z-20 text-center px-4">
+            <h1 class="text-5xl md:text-7xl font-bold text-azure mb-6">
+                <span class="gradient-text">Rekomendasi Wisata</span><br>
+                <span class="gradient-text">Sulawesi Selatan</span><br>
+            </h1>
+            <p class="text-xl text-azure/80 max-w-2xl mx-auto mb-8">
+                Temukan destinasi terbaik yang kami rekomendasikan untuk petualangan tak terlupakan
+            </p>
+            <a href="#destinasi"
+                class="inline-flex items-center px-8 py-3 gradient-bg text-azure font-semibold rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                Jelajahi Sekarang
+                <i class="fas fa-arrow-down ml-2"></i>
+            </a>
+        </div>
+
+        <div class="absolute bottom-10 left-0 right-0 flex justify-center z-20">
+            <div class="animate-bounce w-8 h-8 bg-azure rounded-full flex items-center justify-center">
+                <i class="fas fa-chevron-down text-liver"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16 bg-gradient-to-b from-azure to-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-liver mb-4">
+                    <span class="gradient-text">Keunggulan Sulawesi Selatan</span>
+                </h2>
+                <p class="text-lg text-liver max-w-3xl mx-auto">
+                    Temukan alasan mengapa Sulawesi Selatan menjadi destinasi wisata yang tak terlupakan
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="feature-card rounded-2xl p-8">
+                    <div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-mountain text-3xl text-azure"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-liver mb-4">Pemandangan Alam Menakjubkan</h3>
+                    <p class="text-liver/90">Dari pegunungan tinggi hingga pantai eksotis, Sulawesi Selatan menawarkan
+                        pemandangan alam yang memukau dan beragam.</p>
+                </div>
+
+                <div class="feature-card rounded-2xl p-8">
+                    <div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-landmark text-3xl text-azure"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-liver mb-4">Budaya yang Kaya</h3>
+                    <p class="text-liver/90">Budaya Sulawesi Selatan yang kaya dengan tradisi unik dan arsitektur khas
+                        akan memberikan pengalaman budaya yang mendalam.</p>
+                </div>
+
+                <div class="feature-card rounded-2xl p-8">
+                    <div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-utensils text-3xl text-azure"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-liver mb-4">Kuliner Autentik</h3>
+                    <p class="text-liver/90">Nikmati cita rasa autentik kuliner Sulawesi Selatan yang kaya rempah dan
+                        bercita rasa unik yang tak terlupakan.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Destinasi Section -->
+    <section id="destinasi" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-liver mb-4">
+                <span class="gradient-text">Destinasi Pilihan</span>
+            </h2>
+            <p class="text-lg text-liver max-w-3xl mx-auto">
+                Berikut rekomendasi tempat wisata terbaik di Sulawesi Selatan yang wajib Anda kunjungi
+            </p>
+        </div>
+
+        <!-- Filter Kategori -->
+        <div class="flex flex-wrap justify-center gap-3 mb-12">
+            <button data-category="all"
+                class="filter-btn px-6 py-2 gradient-bg text-azure rounded-full font-medium transition-all active:scale-95 active">
+                Semua
+            </button>
+            <button data-category="pegunungan"
+                class="filter-btn px-6 py-2 bg-azure text-liver rounded-full font-medium transition-all active:scale-95 border border-gray-200">
+                <i class="fas fa-mountain mr-2"></i> Pegunungan
+            </button>
+            <button data-category="pantai"
+                class="filter-btn px-6 py-2 bg-azure text-liver rounded-full font-medium transition-all active:scale-95 border border-gray-200">
+                <i class="fas fa-umbrella-beach mr-2"></i> Pantai
+            </button>
+            <button data-category="budaya"
+                class="filter-btn px-6 py-2 bg-azure text-liver rounded-full font-medium transition-all active:scale-95 border border-gray-200">
+                <i class="fas fa-landmark mr-2"></i> Budaya
+            </button>
+            <button data-category="kuliner"
+                class="filter-btn px-6 py-2 bg-azure text-liver rounded-full font-medium transition-all active:scale-95 border border-gray-200">
+                <i class="fas fa-utensils mr-2"></i> Kuliner
+            </button>
+        </div>
+
+        <!-- Grid Destinasi (akan diisi oleh JavaScript) -->
+        <div id="destinationsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+
+        <div class="text-center mt-16">
+            <a href="pencarian.html"
+                class="px-8 py-3 gradient-bg text-azure font-semibold rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105 inline-flex items-center">
+                Lihat Lebih Banyak
+                <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Modal Detail Wisata -->
+    <div id="destinationModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle" class="text-3xl font-bold"></h2>
+                <div class="flex items-center mt-2">
+                    <i class="fas fa-map-marker-alt mr-2"></i>
+                    <span id="modalLocation"></span>
+                </div>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <img id="modalImage" src="" alt="Destination Image" class="modal-image">
+
+                <div class="flex items-center text-persian-orange mb-4">
+                    <div id="modalRating"></div>
+                    <span class="text-liver text-lg ml-2 font-medium" id="modalReviews"></span>
+                </div>
+
+                <p class="text-liver text-lg mb-6" id="modalDescription"></p>
+
+                <!-- Improved Rating Widget -->
+                <div class="rating-widget mb-6">
+                    <h3 class="text-xl font-bold text-midnight-green mb-3">Beri Rating:</h3>
+                    <div class="flex space-x-2" id="ratingStars">
+                        <i class="far fa-star text-2xl text-gray-400 cursor-pointer hover:text-persian-orange"
+                            data-value="1"></i>
+                        <i class="far fa-star text-2xl text-gray-400 cursor-pointer hover:text-persian-orange"
+                            data-value="2"></i>
+                        <i class="far fa-star text-2xl text-gray-400 cursor-pointer hover:text-persian-orange"
+                            data-value="3"></i>
+                        <i class="far fa-star text-2xl text-gray-400 cursor-pointer hover:text-persian-orange"
+                            data-value="4"></i>
+                        <i class="far fa-star text-2xl text-gray-400 cursor-pointer hover:text-persian-orange"
+                            data-value="5"></i>
+                    </div>
+                    <p id="ratingMessage" class="text-teal mt-2 text-sm"></p>
+                    <button id="submitRating" class="mt-2 px-4 py-2 bg-teal text-white rounded-md text-sm hidden">
+                        Kirim Rating
+                    </button>
+                </div>
+
+                <div class="flex justify-center space-x-4">
+                    <button id="historyButton"
+                        class="px-6 py-2 bg-teal text-azure rounded-lg font-medium hover:bg-midnight-green transition">
+                        <i class="fas fa-landmark mr-2"></i> Sejarah & Budaya
+                    </button>
+                    <button id="mapsButton"
+                        class="px-6 py-2 bg-white border border-teal text-teal rounded-lg font-medium hover:bg-teal hover:text-azure transition">
+                        <i class="fas fa-map-marked-alt mr-2"></i> Lihat Peta
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sejarah & Budaya Page -->
+    <div id="historyPage" class="history-page hidden">
+        <div class="history-header">
+            <div class="back-btn" id="backBtn">
+                <i class="fas fa-arrow-left"></i>
+            </div>
+            <h2 id="historyTitle" class="text-3xl font-bold text-center mt-8"></h2>
+            <div class="text-center mt-2">
+                <i class="fas fa-map-marker-alt mr-2"></i>
+                <span id="historyLocation"></span>
+            </div>
+        </div>
+
+        <div class="history-content">
+            <img id="historyImage" src="" alt="History Image" class="history-image">
+
+            <div id="historyContent">
+                <!-- Konten sejarah dan budaya akan diisi secara dinamis -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-midnight-green text-azure py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">EafTrip</h3>
+                    <p class="mb-4 text-azure/80">Portal rekomendasi wisata terbaik di Sulawesi Selatan untuk pengalaman
+                        tak terlupakan.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-azure hover:text-teal"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-azure hover:text-teal"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-azure hover:text-teal"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-azure hover:text-teal"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Tautan Cepat</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Beranda</a></li>
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Tentang Kami</a></li>
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Destinasi</a></li>
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Blog</a></li>
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Kontak</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Kategori Wisata</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Wisata Alam</a></li>
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Wisata Budaya</a></li>
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Wisata Pantai</a></li>
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Wisata Kuliner</a></li>
+                        <li><a href="#" class="text-azure/80 hover:text-teal transition">Wisata Sejarah</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Kontak Kami</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-teal"></i>
+                            <span class="text-azure/80">Jl. Sangir No. 94, Makassar, Sulawesi
+                                Selatan</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone-alt mr-3 text-teal"></i>
+                            <span class="text-azure/80">+62 812 4414 2632</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-teal"></i>
+                            <span class="text-azure/80">info@wisatasulsel.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-azure/20 mt-12 pt-8 text-center text-azure/80">
+                <p>&copy; 2023 EafTrip. Hak Cipta Dilindungi.(not real)</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="dataDest.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

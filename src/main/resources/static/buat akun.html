@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daftar Akun EafTrip</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .slideshow-container {
+      width: 300%;
+      display: flex;
+      transition: transform 1s ease-in-out;
+    }
+
+    .slide {
+      flex: 0 0 33.3333%;
+      background-size: cover;
+      background-position: center;
+      height: 100vh;
+    }
+
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+  </style>
+</head>
+
+<body class="overflow-hidden">
+
+  <div class="relative w-full h-screen overflow-hidden">
+    <div id="slider" class="absolute top-0 left-0 w-full h-full flex slideshow-container">
+      <div class="slide" style="background-image: url('./wisata/gambar\ 2.jpg')"></div>
+      <div class="slide" style="background-image: url('./wisata/gambar\ 5.jpg')"></div>
+      <div class="slide" style="background-image: url('./wisata/gambar\ 3.jpg')"></div>
+      <div class="slide" style="background-image: url('./wisata/gambar\ 6.jpg')"></div>
+      <div class="slide" style="background-image: url('./wisata/gambar\ 7.jpg')"></div>
+      <div class="slide" style="background-image: url('./wisata/gambar\ 8.jpg')"></div>
+      <div class="slide" style="background-image: url('./wisata/gambar\ 9.jpg')"></div>
+      <div class="slide" style="background-image: url('./wisata/gambar\ 3.jpg')"></div>
+      <div class="slide" style="background-image: url('./wisata/gambar\ 6.jpg')"></div>
+    </div>
+
+    <div class="absolute top-0 left-0 w-full h-full overlay z-10"></div>
+
+    <div
+      class="absolute top-1/2 left-1/2 z-20 transform -translate-x-1/2 -translate-y-1/2 bg-black bg-opacity-70 text-white p-8 rounded-xl w-[90%] max-w-md">
+      <h1 class="text-3xl font-bold text-center mb-2">Nama EafTrip</h1>
+      <p class="text-sm text-center mb-6">Buat akun baru dan temukan keindahan Sulsel!</p>
+
+      <form class="space-y-4">
+        <div>
+          <label for="name" class="block text-sm mb-1"> Username :</label>
+          <input type="text" id="name"
+            class="w-full px-4 py-2 bg-green-800 bg-opacity-90 rounded-md text-white focus:outline-none" required />
+        </div>
+        <div>
+          <label for="email" class="block text-sm mb-1">Email :</label>
+          <input type="email" id="email"
+            class="w-full px-4 py-2 bg-green-800 bg-opacity-90 rounded-md text-white focus:outline-none" required />
+        </div>
+        <div>
+          <label for="password" class="block text-sm mb-1">Password :</label>
+          <input type="password" id="password"
+            class="w-full px-4 py-2 bg-green-800 bg-opacity-90 rounded-md text-white focus:outline-none" required />
+        </div>
+        <div>
+          <label for="confirmPassword" class="block text-sm mb-1">Konfirmasi Password :</label>
+          <input type="password" id="confirmPassword"
+            class="w-full px-4 py-2 bg-green-800 bg-opacity-90 rounded-md text-white focus:outline-none" required />
+        </div>
+        <button type="submit"
+          class="w-full py-2 bg-blue-300 text-black font-semibold rounded-md hover:bg-blue-400 transition">Daftar</button>
+      </form>
+
+      <p class="text-center text-sm mt-4">Sudah punya akun?
+        <a href="login.html" class="text-blue-200 hover:underline">Masuk sekarang</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const slider = document.getElementById("slider");
+    const totalSlides = 9;
+    const imagesPerSlide = 3;
+    let currentGroup = 0;
+
+    function moveSlide() {
+      currentGroup = (currentGroup + 1) % (totalSlides / imagesPerSlide);
+      slider.style.transform = `translateX(-${currentGroup * 100}%)`;
+    }
+
+    setInterval(moveSlide, 3000);
+  </script>
+
+</body>
+
+</html>
