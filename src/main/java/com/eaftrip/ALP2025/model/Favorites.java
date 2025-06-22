@@ -3,6 +3,7 @@ package com.eaftrip.ALP2025.model;
 import jakarta.persistence.*;
 import java.io.Serializable;
 
+@SuppressWarnings("unused")
 @Entity
 @Table(name = "favorites")
 @IdClass(FavoritesId.class)

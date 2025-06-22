@@ -88,10 +88,10 @@
             </div>
             <span class="font-bold text-xl">EafTrip</span>
         </div>
+        <!--this is the Navbar-->
         <div class="md:flex space-x-6 font-medium">
-            <a href="#" class="hover:underline hover:text-c3f0f5">Beranda</a>
-            <a href="#" class="hover:underline hover:text-c3f0f5">Provinsi</a>
-            <a href="#" class="hover:underline hover:text-c3f0f5">Kota</a>
+            <a href="index.html" class="hover:underline hover:text-c3f0f5">Beranda</a>
+            <a href="#" class="hover:underline hover:text-c3f0f5">Profil</a>
             <a href="Favorit.html" class="hover:underline hover:text-c3f0f5">Favorit</a>
             <div class="flex items-center">
                 <button id="logoutButton" class="flex items-center text-azure hover:text-persian-orange transition">
@@ -361,8 +361,400 @@
         </div>
     </footer>
 
-    <script src="dataDest.js"></script>
     <script src="script.js"></script>
+    <script>
+        // Base URL for API - change this to your Spring Boot backend URL
+        // For local development: 'http://localhost:8080'
+        // For GitHub Pages with ngrok: 'https://your-ngrok-url.ngrok.io'
+        const API_BASE_URL = 'http://localhost:8080';
+
+        // Global variables
+        let destinations = [];
+        let selectedRating = 0;
+        let currentDestination = null;
+
+        // Fetch destinations from backend
+        async function fetchDestinations() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/destinations`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                destinations = await response.json();
+                renderDestinations(destinations);
+            } catch (error) {
+                console.error('Error fetching destinations:', error);
+                document.getElementById('destinationsGrid').innerHTML =
+                    '<p class="text-center col-span-3 text-liver">Error loading destinations. Please try again later.</p>';
+            }
+        }
+
+        // Fetch destination history from backend
+        async function fetchDestinationHistory(destinationId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/destinations/${destinationId}/history`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching destination history:', error);
+                return null;
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchDestinations();
+
+            // Initialize favorites
+            if (!localStorage.getItem('favorites')) {
+                localStorage.setItem('favorites', JSON.stringify([]));
+            }
+
+            // Check login status
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+            if (!isLoggedIn && !window.location.pathname.includes('login.html') &&
+                !window.location.pathname.includes('buat akun.html') &&
+                !window.location.pathname.includes('welcome page.html')) {
+                window.location.href = 'login.html';
+            }
+
+            // Setup modal events
+            setupModalEvents();
+            setupRatingWidget();
+
+            // Initialize user ratings in localStorage
+            if (!localStorage.getItem('userRatings')) {
+                localStorage.setItem('userRatings', JSON.stringify({}));
+            }
+
+            // Load user ratings
+            loadUserRatings();
+
+            // Add event listeners to filter buttons
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+
+                    // Add active class to clicked button
+                    this.classList.add('active');
+
+                    // Filter destinations
+                    const category = this.getAttribute('data-category');
+                    const filteredDestinations = filterDestinations(category);
+                    renderDestinations(filteredDestinations);
+                });
+            });
+
+            // Logout functionality
+            const logoutButton = document.getElementById('logoutButton');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', function () {
+                    sessionStorage.removeItem('isLoggedIn');
+                    sessionStorage.removeItem('currentUser');
+                    window.location.href = 'login.html';
+                });
+            }
+        });
+
+        // Filter destinations by category
+        function filterDestinations(category) {
+            if (category === 'all') {
+                return destinations;
+            }
+
+            return destinations.filter(destination =>
+                destination.category.toLowerCase().includes(category.toLowerCase())
+            );
+        }
+
+        // Load user ratings from localStorage
+        function loadUserRatings() {
+            const userRatings = JSON.parse(localStorage.getItem('userRatings') || {});
+            destinations.forEach(destination => {
+                if (userRatings[destination.iddestination]) {
+                    destination.userRating = userRatings[destination.iddestination];
+                }
+            });
+        }
+
+        // Setup modal events
+        function setupModalEvents() {
+            // Close modal
+            document.querySelector('.close-modal')?.addEventListener('click', function () {
+                const modal = document.getElementById('destinationModal');
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            });
+
+            // History button
+            document.getElementById('historyButton')?.addEventListener('click', async function () {
+                const destinationId = parseInt(this.getAttribute('data-id'));
+                const history = await fetchDestinationHistory(destinationId);
+                if (history) {
+                    showHistoryPage(history);
+                }
+            });
+
+            // Map button
+            document.getElementById('mapsButton')?.addEventListener('click', function () {
+                const destinationId = parseInt(this.getAttribute('data-id'));
+                const destination = destinations.find(dest => dest.iddestination === destinationId);
+                if (destination) {
+                    // Create a Google Maps search URL
+                    const query = encodeURIComponent(`${destination.title}, ${destination.location}`);
+                    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+                }
+            });
+
+            // Back button
+            document.getElementById('backBtn')?.addEventListener('click', function () {
+                document.getElementById('historyPage').classList.add('hidden');
+                document.getElementById('destinationModal').classList.remove('hidden');
+            });
+
+            // Close modal when clicking outside
+            document.getElementById('destinationModal')?.addEventListener('click', function (e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        }
+
+        // Setup rating widget
+        function setupRatingWidget() {
+            // Use event delegation for rating stars
+            document.getElementById('destinationModal')?.addEventListener('click', function (e) {
+                if (e.target && e.target.classList.contains('fa-star') && e.target.parentElement.id === 'ratingStars') {
+                    const value = parseInt(e.target.getAttribute('data-value'));
+                    selectedRating = value;
+
+                    const stars = document.querySelectorAll('#ratingStars .fa-star');
+                    stars.forEach((s, index) => {
+                        if (index < value) {
+                            s.classList.remove('far', 'text-gray-400');
+                            s.classList.add('fas', 'text-persian-orange');
+                        } else {
+                            s.classList.remove('fas', 'text-persian-orange');
+                            s.classList.add('far', 'text-gray-400');
+                        }
+                    });
+
+                    document.getElementById('submitRating')?.classList.remove('hidden');
+                }
+            });
+
+            // Submit rating
+            document.getElementById('submitRating')?.addEventListener('click', async function () {
+                if (selectedRating > 0 && currentDestination) {
+                    try {
+                        // Send rating to backend
+                        const response = await fetch(`${API_BASE_URL}/api/destinations/${currentDestination.iddestination}/rate`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                rating: selectedRating,
+                                userId: sessionStorage.getItem('userId') || 0
+                            }),
+                        });
+
+                        if (response.ok) {
+                            // Update the UI with the new rating
+                            const updatedDestination = await response.json();
+                            currentDestination.rating = updatedDestination.rating;
+                            currentDestination.reviews = updatedDestination.reviews;
+
+                            // Update user rating in localStorage
+                            const userRatings = JSON.parse(localStorage.getItem('userRatings') || '{}');
+                            userRatings[currentDestination.iddestination] = selectedRating;
+                            localStorage.setItem('userRatings', JSON.stringify(userRatings));
+
+                            // Update the modal display
+                            document.getElementById('modalRating').innerHTML = renderStars(currentDestination.rating);
+                            document.getElementById('modalReviews').textContent = `(${currentDestination.reviews} ulasan)`;
+                            document.getElementById('ratingMessage').textContent = 'Terima kasih atas rating Anda!';
+                            this.classList.add('hidden');
+
+                            // Update the grid display if needed
+                            if (document.getElementById('destinationsGrid')) {
+                                renderDestinations(destinations);
+                            }
+                        } else {
+                            throw new Error('Failed to submit rating');
+                        }
+                    } catch (error) {
+                        console.error('Error submitting rating:', error);
+                        document.getElementById('ratingMessage').textContent = 'Gagal mengirim rating. Silakan coba lagi.';
+                    }
+                }
+            });
+        }
+
+        // Common functions
+        function renderStars(rating) {
+            let starsHTML = '';
+            const fullStars = Math.floor(rating);
+            const halfStar = rating % 1 >= 0.5;
+
+            for (let i = 0; i < fullStars; i++) {
+                starsHTML += '<i class="fas fa-star text-persian-orange"></i>';
+            }
+
+            if (halfStar) {
+                starsHTML += '<i class="fas fa-star-half-alt text-persian-orange"></i>';
+            }
+
+            const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+            for (let i = 0; i < emptyStars; i++) {
+                starsHTML += '<i class="far fa-star text-persian-orange"></i>';
+            }
+
+            return starsHTML;
+        }
+
+        // Favorite functions
+        function getFavorites() {
+            return JSON.parse(localStorage.getItem('favorites')) || [];
+        }
+
+        function toggleFavorite(id) {
+            const favorites = getFavorites();
+            const index = favorites.indexOf(id);
+
+            if (index === -1) {
+                favorites.push(id);
+            } else {
+                favorites.splice(index, 1);
+            }
+
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            return favorites.includes(id);
+        }
+
+        // Render destinations to the grid
+        function renderDestinations(destinationsToRender) {
+            const grid = document.getElementById('destinationsGrid');
+            if (!grid) return;
+
+            grid.innerHTML = '';
+
+            destinationsToRender.forEach(destination => {
+                const isFavorite = getFavorites().includes(destination.iddestination);
+                const card = document.createElement('div');
+                card.className = 'card group relative rounded-2xl overflow-hidden shadow-xl h-96 shine-effect';
+                card.innerHTML = `
+                    <i class="heart-icon ${isFavorite ? 'fas favorited' : 'far'} fa-heart" 
+                       data-id="${destination.iddestination}"></i>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent z-10"></div>
+                    <img src="${destination.image}" 
+                        alt="${destination.title}" 
+                        class="card-image absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    
+                    <div class="absolute bottom-0 left-0 right-0 z-20 p-6">
+                        <div class="tag inline-block px-3 py-1 rounded-full text-sm text-azure mb-2">
+                            <i class="fas fa-map-marker-alt mr-1"></i> ${destination.location}
+                        </div>
+                        <h3 class="text-2xl font-bold text-azure mb-2">${destination.title}</h3>
+                        <div class="flex items-center text-persian-orange mb-3">
+                            ${renderStars(destination.rating)}
+                            <span class="text-azure text-sm ml-2">${destination.rating} (${destination.reviews.toLocaleString()} ulasan)</span>
+                        </div>
+                        <p class="text-azure/90 mb-4">${destination.description}</p>
+                        <button class="detail-btn px-4 py-2 bg-azure text-teal rounded-full font-semibold text-sm hover:bg-gray-100 transition flex items-center"
+                                data-id="${destination.iddestination}">
+                            <i class="fas fa-info-circle mr-2"></i> Detail Wisata
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            // Attach event listeners to detail buttons
+            document.querySelectorAll('.detail-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    const destination = destinations.find(dest => dest.iddestination === id);
+                    showDestinationModal(destination);
+                });
+            });
+
+            // Attach event listeners to heart icons
+            document.querySelectorAll('.heart-icon').forEach(icon => {
+                icon.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const id = parseInt(this.getAttribute('data-id'));
+                    const isNowFavorite = toggleFavorite(id);
+
+                    // Update icon appearance
+                    if (isNowFavorite) {
+                        this.classList.replace('far', 'fas');
+                        this.classList.add('favorited');
+                    } else {
+                        this.classList.replace('fas', 'far');
+                        this.classList.remove('favorited');
+                    }
+                });
+            });
+        }
+
+        // Show destination modal
+        function showDestinationModal(destination) {
+            if (!destination) return;
+
+            currentDestination = destination;
+            selectedRating = 0;
+
+            const modal = document.getElementById('destinationModal');
+            document.getElementById('modalTitle').textContent = destination.title;
+            document.getElementById('modalLocation').textContent = destination.location;
+            document.getElementById('modalImage').src = destination.image;
+            document.getElementById('modalImage').alt = destination.title;
+            document.getElementById('modalRating').innerHTML = renderStars(destination.rating);
+            document.getElementById('modalReviews').textContent = `(${destination.reviews} ulasan)`;
+            document.getElementById('modalDescription').textContent = destination.description;
+
+            // Set data-id for buttons
+            document.getElementById('historyButton').setAttribute('data-id', destination.iddestination);
+            document.getElementById('mapsButton').setAttribute('data-id', destination.iddestination);
+
+            // Reset rating UI
+            const stars = document.querySelectorAll('#ratingStars .fa-star');
+            stars.forEach(star => {
+                star.classList.remove('fas', 'text-persian-orange');
+                star.classList.add('far', 'text-gray-400');
+            });
+
+            // Hide submit button
+            const submitBtn = document.getElementById('submitRating');
+            if (submitBtn) submitBtn.classList.add('hidden');
+
+            // Clear rating message
+            const ratingMessage = document.getElementById('ratingMessage');
+            if (ratingMessage) ratingMessage.textContent = '';
+
+            // Show modal
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Show history page
+        function showHistoryPage(history) {
+            if (!history) return;
+
+            document.getElementById('historyTitle').textContent = "Sejarah & Budaya " + history.title;
+            document.getElementById('historyLocation').textContent = history.location;
+            document.getElementById('historyImage').src = history.image;
+            document.getElementById('historyContent').innerHTML = history.content;
+            document.getElementById('destinationModal').classList.add('hidden');
+            document.getElementById('historyPage').classList.remove('hidden');
+        }
+    </script>
 </body>
 
 </html>
