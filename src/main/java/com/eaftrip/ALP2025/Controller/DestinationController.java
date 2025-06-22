@@ -2,9 +2,7 @@ package com.eaftrip.ALP2025.Controller;
 
 import com.eaftrip.ALP2025.exception.*;
 import com.eaftrip.ALP2025.model.Destination;
-import com.eaftrip.ALP2025.model.dto.DestinationWithHistoryDTO;
 import com.eaftrip.ALP2025.repository.DestinationRepository;
-import com.eaftrip.ALP2025.service.DestinationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +17,6 @@ public class DestinationController {
 
     @Autowired
     private DestinationRepository destinationRepository;
-
-    @Autowired
-    private DestinationService destinationService;
 
     // Get all destinations
     @GetMapping
@@ -49,12 +44,6 @@ public class DestinationController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Get destination with full history data
-    @GetMapping("/{id}/full")
-    public ResponseEntity<DestinationWithHistoryDTO> getDestinationWithHistory(@PathVariable Integer id) {
-        return ResponseEntity.ok(destinationService.getDestinationWithHistory(id));
-    }
-
     // Get only history data
     @GetMapping("/{id}/history")
     public ResponseEntity<Map<String, String>> getHistoryData(@PathVariable Integer id) {
@@ -62,9 +51,9 @@ public class DestinationController {
                 .orElseThrow(() -> new ResourceNotFoundException("Destination not found"));
 
         Map<String, String> history = Map.of(
-                "title", destination.getHistoryTitle() != null ? destination.getHistoryTitle() : "",
+                "title", destination.getTitle() != null ? destination.getTitle() : "",
                 "content", destination.getHistoryContent() != null ? destination.getHistoryContent() : "",
-                "image", destination.getHistoryImage() != null ? destination.getHistoryImage() : "",
+                "image", destination.getImage() != null ? destination.getImage() : "",
                 "location", destination.getLocation());
 
         return ResponseEntity.ok(history);
@@ -79,20 +68,11 @@ public class DestinationController {
         Destination destination = destinationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Destination not found"));
 
-        destination.setHistoryTitle(historyData.get("title"));
+        destination.setTitle(historyData.get("title"));
         destination.setHistoryContent(historyData.get("content"));
-        destination.setHistoryImage(historyData.get("image"));
+        destination.setImage(historyData.get("image"));
 
         Destination updated = destinationRepository.save(destination);
         return ResponseEntity.ok(updated);
-    }
-
-    // Update comprehensive data
-    @PutMapping("/{id}/full")
-    public ResponseEntity<DestinationWithHistoryDTO> updateFullDestination(
-            @PathVariable Integer id,
-            @RequestBody DestinationWithHistoryDTO dto) {
-
-        return ResponseEntity.ok(destinationService.updateDestinationWithHistory(id, dto));
     }
 }

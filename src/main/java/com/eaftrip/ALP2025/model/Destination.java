@@ -33,12 +33,6 @@ public class Destination {
 
     private String category;
 
-    @Column(name = "history_title", length = 255)
-    private String historyTitle;
-
     @Column(name = "history_content", columnDefinition = "TEXT")
     private String historyContent;
-
-    @Column(name = "history_image", length = 512)
-    private String historyImage;
 }
