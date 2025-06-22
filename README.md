@@ -91,7 +91,6 @@ CREATE TABLE favorites (
 );
 CREATE TABLE reviews (
     id INT(11) NOT NULL AUTO_INCREMENT,
-    comment VARCHAR(1000),
     created_at DATETIME(6),
     iddestination INT(11) NOT NULL,
     rating INT(11) NOT NULL,
@@ -100,3 +99,7 @@ CREATE TABLE reviews (
     FOREIGN KEY (iddestination) REFERENCES destinations(iddestination) ON DELETE CASCADE,
     FOREIGN KEY (iduser) REFERENCES users(iduser) ON DELETE CASCADE
 );'''
+
+now the user can start inputting some data to the database, note that the history_content column of the destinations table is filled with innerHTML starting from <h2> then followed up with <p>s and other <h2> to keep the styling consistent.
+
+run the java code, then go to you browser to look up "localhost:8080"
